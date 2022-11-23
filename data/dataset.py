@@ -6,6 +6,7 @@ import json
 import numpy as np
 import torchvision.transforms as transforms
 import os
+import pandas as pd
 
 identity = lambda x: x
 
@@ -123,6 +124,36 @@ class SetDataset_JSON:
         data = data_path + '/' + data_file
         with open(data, 'r') as f:
             self.meta = json.load(f)
+
+        self.cl_list = np.unique(self.meta['image_labels']).tolist()
+
+        self.sub_meta = {}
+        for cl in self.cl_list:
+            self.sub_meta[cl] = []
+
+        for x, y in zip(self.meta['image_names'], self.meta['image_labels']):
+            self.sub_meta[y].append(x)
+
+        self.sub_dataloader = []
+        sub_data_loader_params = dict(batch_size=batch_size,
+                                      shuffle=True,
+                                      num_workers=0,  # use main thread only or may receive multiple batches
+                                      pin_memory=False)
+        for cl in self.cl_list:
+            sub_dataset = SubDataset_JSON(self.sub_meta[cl], cl, transform=transform)
+            self.sub_dataloader.append(torch.utils.data.DataLoader(sub_dataset, **sub_data_loader_params))
+
+    def __getitem__(self, i):
+        return next(iter(self.sub_dataloader[i]))
+
+    def __len__(self):
+        return len(self.cl_list)
+
+
+class SetDataset_PD:
+    def __init__(self, data_path, data_file, batch_size, transform):
+        data = data_path + '/' + data_file
+        self.meta = pd.read_csv(data,sep=',',engine='python')
 
         self.cl_list = np.unique(self.meta['image_labels']).tolist()
 
