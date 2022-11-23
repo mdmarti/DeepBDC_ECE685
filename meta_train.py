@@ -9,6 +9,7 @@ import os
 import glob
 
 from data.datamgr import SetDataManager
+from data.prepare_csvs import prepare_dataset_csv
 
 from methods.protonet import ProtoNet
 from methods.meta_deepbdc import MetaDeepBDC
@@ -80,8 +81,9 @@ if __name__ == '__main__':
     parser.add_argument('--epoch', default=100, type=int, help='Stopping epoch')
     parser.add_argument('--gpu', default='0', help='gpu id')
 
-    parser.add_argument('--dataset', default='cats', choices=['cats','dogs'])
+    parser.add_argument('--dataset', default='cats', choices=['cats','birds'])
     parser.add_argument('--data_path', type=str, help='dataset path')
+    parser.add_argument('--preprocess',type=bool, default=False, help="turn these datasets into usable format")
 
     parser.add_argument('--model', default='ResNet12', choices=['ResNet12','ResNet18'])
     parser.add_argument('--method', default='meta_deepbdc', choices=['meta_deepbdc', 'protonet'])
@@ -103,17 +105,24 @@ if __name__ == '__main__':
     parser.add_argument('--reduce_dim', default=640, type=int, help='the output dimension of BDC dimensionality reduction layer')
     params = parser.parse_args()
 
+    if params.preprocess:
+        base_file, val_file, test_file = prepare_dataset_csv(params.data_path,params.dataset + ".csv",params.dataset)
+    else:
+        base_file = 'train.csv'
+        val_file = 'val.csv'
+    
     num_gpu = set_gpu(params)
     set_seed(params.seed)
 
 
-
+    #base_file = os.path.join(params.data_path,'train.csv')
+    #val_file = os.path.join(params.data_path,'val.csv')
     train_few_shot_params = dict(n_way=params.train_n_way, n_support=params.n_shot)
-    base_datamgr = SetDataManager(params.data_path, params.image_size, n_query=params.n_query, n_episode=params.train_n_episode, json_read=json_file_read, **train_few_shot_params)
+    base_datamgr = SetDataManager(params.data_path, params.image_size, n_query=params.n_query, n_episode=params.train_n_episode, json_read=False,pd_read = True, **train_few_shot_params)
     base_loader = base_datamgr.get_data_loader(base_file, aug=True)
 
     test_few_shot_params = dict(n_way=params.val_n_way, n_support=params.n_shot)
-    val_datamgr = SetDataManager(params.data_path, params.image_size, n_query=params.n_query, n_episode=params.val_n_episode, json_read=json_file_read, **test_few_shot_params)
+    val_datamgr = SetDataManager(params.data_path, params.image_size, n_query=params.n_query, n_episode=params.val_n_episode, json_read=False,pd_read = True, **test_few_shot_params)
     val_loader = val_datamgr.get_data_loader(val_file, aug=False)
     # a batch for SetDataManager: a [n_way, n_support + n_query, dim, w, h] tensor
 
@@ -135,7 +144,7 @@ if __name__ == '__main__':
     
     print(params.pretrain_path)
     modelfile = os.path.join(params.pretrain_path)
-    model = load_model(model, modelfile)
+    #model = load_model(model, modelfile)
 
     if not os.path.isdir(params.checkpoint_dir):
         os.makedirs(params.checkpoint_dir)

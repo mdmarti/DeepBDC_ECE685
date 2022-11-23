@@ -4,7 +4,7 @@ import torch
 from PIL import Image
 import numpy as np
 import torchvision.transforms as transforms
-from data.dataset import SetDataset_JSON, SimpleDataset, SetDataset, EpisodicBatchSampler, SimpleDataset_JSON
+from data.dataset import SetDataset_PD,SetDataset_JSON, SimpleDataset, SetDataset, EpisodicBatchSampler, SimpleDataset_JSON
 from abc import abstractmethod
 
 
@@ -12,11 +12,11 @@ class TransformLoader:
     def __init__(self, image_size):
         self.normalize_param = dict(mean=[0.472, 0.453, 0.410], std=[0.277, 0.268, 0.285])
         
-        self.image_size = image_size
-        if image_size < 92:
-            self.resize_size = 92
-        elif image_size == 224:
-            self.resize_size = 256
+        self.image_size = 224
+        #if image_size == 84:
+        #self.resize_size = 92
+        #elif image_size == 224:
+        self.resize_size = 256
 
     def get_composed_transform(self, aug=False):
         if aug:
@@ -64,7 +64,7 @@ class SimpleDataManager(DataManager):
 
 
 class SetDataManager(DataManager):
-    def __init__(self, data_path, image_size, n_way, n_support, n_query, n_episode, json_read=False):
+    def __init__(self, data_path, image_size, n_way, n_support, n_query, n_episode, json_read=False,pd_read=True):
         super(SetDataManager, self).__init__()
         self.image_size = image_size
         self.n_way = n_way
@@ -72,6 +72,7 @@ class SetDataManager(DataManager):
         self.n_episode = n_episode
         self.data_path = data_path
         self.json_read = json_read
+        self.pd_read = pd_read
 
         self.trans_loader = TransformLoader(image_size)
 
@@ -79,6 +80,8 @@ class SetDataManager(DataManager):
         transform = self.trans_loader.get_composed_transform(aug)
         if self.json_read:
             dataset = SetDataset_JSON(self.data_path, data_file, self.batch_size, transform)
+        elif self.pd_read:
+            dataset = SetDataset_PD(self.data_path, data_file, self.batch_size, transform)
         else:
             dataset = SetDataset(self.data_path, data_file, self.batch_size, transform)
         sampler = EpisodicBatchSampler(len(dataset), self.n_way, self.n_episode)
