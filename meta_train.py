@@ -80,7 +80,7 @@ if __name__ == '__main__':
     parser.add_argument('--epoch', default=100, type=int, help='Stopping epoch')
     parser.add_argument('--gpu', default='0', help='gpu id')
 
-    parser.add_argument('--dataset', default='mini_imagenet', choices=['mini_imagenet','tiered_imagenet','cub'])
+    parser.add_argument('--dataset', default='cats', choices=['cats','dogs'])
     parser.add_argument('--data_path', type=str, help='dataset path')
 
     parser.add_argument('--model', default='ResNet12', choices=['ResNet12','ResNet18'])
@@ -106,22 +106,7 @@ if __name__ == '__main__':
     num_gpu = set_gpu(params)
     set_seed(params.seed)
 
-    json_file_read = False
-    if params.dataset == 'mini_imagenet':
-        base_file = 'train'
-        val_file = 'val'
-        params.num_classes = 64
-    elif params.dataset == 'cub':
-        base_file = 'base.json'
-        val_file = 'val.json'
-        json_file_read = True
-        params.num_classes = 200
-    elif params.dataset == 'tiered_imagenet':
-        base_file = 'train'
-        val_file = 'val'
-        params.num_classes = 351
-    else:
-        ValueError('dataset error')
+
 
     train_few_shot_params = dict(n_way=params.train_n_way, n_support=params.n_shot)
     base_datamgr = SetDataManager(params.data_path, params.image_size, n_query=params.n_query, n_episode=params.train_n_episode, json_read=json_file_read, **train_few_shot_params)
