@@ -91,7 +91,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', default='mini_imagenet', choices=['mini_imagenet','tiered_imagenet','cub'])
     parser.add_argument('--data_path', type=str, help='dataset path')
 
-    parser.add_argument('--model', default='ResNet12', choices=['ResNet12', 'ResNet18'])
+    parser.add_argument('--model', default='ResNet18', choices=['ResNet12', 'ResNet18'])
     parser.add_argument('--method', default='stl_deepbdc', choices=['meta_deepbdc', 'stl_deepbdc', 'protonet', 'good_embed'])
     
     parser.add_argument('--val', default='meta', choices=['meta', 'last'], help='validation method')

@@ -173,6 +173,7 @@ class MetaTemplate(nn.Module):
         self.n_way = n_way
         self.n_support = n_support
         self.n_query = params.n_query  # (change depends on input)
+
         self.feature = model_func()
         self.change_way = change_way  # some methods allow different_way classification during training and test
         self.params = params

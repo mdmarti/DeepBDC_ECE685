@@ -18,9 +18,9 @@ import tqdm
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--image_size', default=84, type=int, choices=[84, 224])
-parser.add_argument('--dataset', default='mini_imagenet', choices=['mini_imagenet', 'tiered_imagenet', 'cub'])
+parser.add_argument('--dataset', default='cats', choices=['cats', 'birds'])
 parser.add_argument('--data_path', type=str)
-parser.add_argument('--model', default='ResNet12', choices=['ResNet12', 'ResNet18'])
+parser.add_argument('--model', default='ResNet18', choices=['ResNet12', 'ResNet18'])
 parser.add_argument('--method', default='stl_deepbdc', choices=['meta_deepbdc', 'stl_deepbdc', 'protonet', 'good_embed'])
 
 parser.add_argument('--test_n_way', default=5, type=int, help='number of classes used for testing (validation)')
@@ -44,11 +44,13 @@ if params.dataset == 'cub':
     novel_file = 'novel.json'
     json_file_read = True
 else:
-    novel_file = 'test'
+    novel_file = 'test.csv'
+
+
 
 
 novel_few_shot_params = dict(n_way=params.test_n_way, n_support=params.n_shot)
-novel_datamgr = SetDataManager(params.data_path, params.image_size, n_query=params.n_query, n_episode=params.test_n_episode, json_read=json_file_read,  **novel_few_shot_params)
+novel_datamgr = SetDataManager(params.data_path, params.image_size, n_query=params.n_query, n_episode=params.test_n_episode, json_read=False,pd_read=True,  **novel_few_shot_params)
 novel_loader = novel_datamgr.get_data_loader(novel_file, aug=False)
 
 if params.method == 'protonet':

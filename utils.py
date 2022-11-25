@@ -5,10 +5,13 @@ import argparse
 import network.resnet as resnet
 import torch
 import random
+from torchvision.models import resnet18 as r18
+from torchvision.models import ResNet18_Weights
 
 model_dict = dict(
     ResNet10=resnet.ResNet10,
     ResNet12=resnet.ResNet12,
+    r18=r18(weights=ResNet18_Weights.IMAGENET1K_V1),
     ResNet18=resnet.ResNet18,
     ResNet34=resnet.ResNet34,
     ResNet34s=resnet.ResNet34s,

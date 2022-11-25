@@ -85,7 +85,7 @@ if __name__ == '__main__':
     parser.add_argument('--data_path', type=str, help='dataset path')
     parser.add_argument('--preprocess',type=bool, default=False, help="turn these datasets into usable format")
 
-    parser.add_argument('--model', default='ResNet12', choices=['ResNet12','ResNet18'])
+    parser.add_argument('--model', default='ResNet18', choices=['ResNet12','ResNet18'])
     parser.add_argument('--method', default='meta_deepbdc', choices=['meta_deepbdc', 'protonet'])
 
     parser.add_argument('--train_n_episode', default=600, type=int, help='number of episodes in meta train')
@@ -143,8 +143,8 @@ if __name__ == '__main__':
     model = model.cuda()
     
     print(params.pretrain_path)
-    modelfile = os.path.join(params.pretrain_path)
-    #model = load_model(model, modelfile)
+    modelfile = os.path.join(params.pretrain_path,'last_model.tar')
+    model = load_model(model, modelfile)
 
     if not os.path.isdir(params.checkpoint_dir):
         os.makedirs(params.checkpoint_dir)

@@ -118,7 +118,8 @@ def prepare_dataset_csv(data_path,data_file,dsName='cats'):
             label_counts[l] = count
 
             imFns = data_df.loc[data_df.labels == l].filepaths
-            label_fns[l] = list(imFns)
+            imFns = list(imFns)
+            label_fns[l] = [data_path + '/' + f for f in imFns]
         #1. rename labels as "image_labels"
         #2. rename filepaths, give full filepath
         #3. save train df as new csv, test df as new csv
