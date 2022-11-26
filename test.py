@@ -21,7 +21,7 @@ parser.add_argument('--image_size', default=84, type=int, choices=[84, 224])
 parser.add_argument('--dataset', default='cats', choices=['cats', 'birds'])
 parser.add_argument('--data_path', type=str)
 parser.add_argument('--model', default='ResNet18', choices=['ResNet12', 'ResNet18'])
-parser.add_argument('--method', default='stl_deepbdc', choices=['meta_deepbdc', 'stl_deepbdc', 'protonet', 'good_embed'])
+parser.add_argument('--method', default='meta_deepbdc', choices=['meta_deepbdc', 'stl_deepbdc', 'protonet', 'good_embed'])
 
 parser.add_argument('--test_n_way', default=5, type=int, help='number of classes used for testing (validation)')
 parser.add_argument('--n_shot', default=5, type=int, help='number of labeled data in each class, same as n_support')
@@ -67,7 +67,7 @@ model = model.cuda()
 model.eval()
 
 print(params.model_path)
-model_file = os.path.join(params.model_path)
+model_file = os.path.join(params.model_path,"best_model.tar")
 model = load_model(model, model_file)
 
 print(params)

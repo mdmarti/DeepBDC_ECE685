@@ -14,7 +14,7 @@ class MetaDeepBDC(MetaTemplate):
         
         reduce_dim = params.reduce_dim
         self.feat_dim = int(reduce_dim * (reduce_dim+1) / 2)
-        print(self.feature.feat_dim)
+        #print(self.feature.feat_dim)
         self.dcov = BDC(is_vec=True, input_dim=self.feature.feat_dim, dimension_reduction=reduce_dim)
 
     def feature_forward(self, x):
