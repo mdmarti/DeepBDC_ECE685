@@ -3,6 +3,9 @@
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<img src="http://peihuali.org/DeepBDC/illustration.gif" width="80%"/>
 </div>
 
+## Introduction to the introduction
+
+This repo provides our (Miles Martinez, Harsh Bandhey, Daniela de Albuquerque, Raphael Geddert) implementation of the following repo. Files modified are test.py, meta_train.py, dataset.py. Files created from scratch are prepare_csvs.py, run_cv.sh, run_test.sh. Prepare_csvs.py took care of data preprocessing, .sh files ran cross-validation and test.
 
 ## Introduction
 In this repo, we provide the implementation of the following paper:<br>
